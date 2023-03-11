@@ -39,8 +39,27 @@ public class EmployeeDao
 	{
 
 	}
-	public void delete() {
-
+	public int delete(int id) 
+	{
+		String deleteQuery = "DELETE FROM employee WHERE id="+id;
+		Connection conn = DbConnection.getConnection();
+		Statement stmt= null;
+		int rowsAffected = 0 ; 
+		if (conn!=null) 
+		{
+			try 
+			{
+				stmt= conn.createStatement();
+				rowsAffected = stmt.executeUpdate(deleteQuery);
+			} catch (SQLException e) 
+			{
+				e.printStackTrace();
+			}
+		} else 
+		{
+			System.out.println("EmployeeDao -- Db not connected");
+		}
+		return rowsAffected;
 	}
 	public void getAllRecords() 
 	{
@@ -49,37 +68,37 @@ public class EmployeeDao
 	public static void main(String[] args) 
 	{
 		Scanner sc = new Scanner(System.in);
-		System.out.println("Enter Name : ");
-		String name = sc.nextLine();
-		System.out.println("Enter Salary : ");
-		int salary = sc.nextInt();
-		sc.nextLine();
-		System.out.println("Enter Dsgn : ");
-		String dsgn = sc.nextLine();
-		System.out.println("Enter OrgName : ");
-		String orgname = sc.nextLine();
+		System.out.println("Enter ID : ");
+		int id = sc.nextInt();
+//		System.out.println("Enter Salary : ");
+//		int salary = sc.nextInt();
+//		sc.nextLine();
+//		System.out.println("Enter Dsgn : ");
+//		String dsgn = sc.nextLine();
+//		System.out.println("Enter OrgName : ");
+//		String orgname = sc.nextLine();
 		
 		
 		// Create EmployeeBean 
-		EmployeeBean ebean = new EmployeeBean();
-		ebean.setName(name);
-		ebean.setSalary(salary);
-		ebean.setDsgn(dsgn);
-		ebean.setOrgname(orgname);
+//		EmployeeBean ebean = new EmployeeBean();
+//		ebean.setName(name);
+//		ebean.setSalary(salary);
+//		ebean.setDsgn(dsgn);
+//		ebean.setOrgname(orgname);
 
 		
 		// create EmployeeDao 
 		
 		EmployeeDao dao = new EmployeeDao();
 		
-		int rowsAffected = dao.insert(ebean);
+		int rowsAffected = dao.delete(id);
 		
 		if (rowsAffected > 0)
 		{
-			System.out.println("Employee Record succcessfully Inserted : " + rowsAffected);
+			System.out.println("Employee Record succcessfully Deleted : " + rowsAffected);
 		} else 
 		{
-			System.out.println("Employee Record not Inserted : " + rowsAffected);
+			System.out.println("Employee Record not Deleted : " + rowsAffected);
 		}
 	}
 }
