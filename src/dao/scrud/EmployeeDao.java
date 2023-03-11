@@ -35,8 +35,29 @@ public class EmployeeDao
 		}
 		return rowsAffected;
 	}
-	public  void update() 
+	public int update(int updatedId,EmployeeBean ebean) 
 	{
+		int rowsAffected = 0;
+		String updateQuery = "UPDATE employee SET name = '"+ebean.getName()+"', salary ="+ebean.getSalary()+" ,dsgn='"+ebean.getDsgn()+"',orgName='"+ebean.getOrgname()+"' WHERE id="+updatedId;
+		Statement stmt = null;
+		Connection conn = DbConnection.getConnection();
+		//  validate Connection object
+		if (conn!=null) 
+		{
+			try 
+			{
+				stmt = conn.createStatement();
+				rowsAffected = stmt.executeUpdate(updateQuery);
+				
+			} catch (SQLException e) 
+			{
+				e.printStackTrace();
+			}
+		} else 
+		{
+			System.out.println("EmployeeDao--update() --Db not Connected : " + conn);
+		}
+		return rowsAffected;
 
 	}
 	public int delete(int id) 
@@ -67,38 +88,51 @@ public class EmployeeDao
 	}
 	public static void main(String[] args) 
 	{
+		
+		EmployeeDao dao = new EmployeeDao();
+		EmployeeBean ebean1 = new EmployeeBean();
+		ebean1.setName("Rahul");
+		ebean1.setSalary(1000);
+		ebean1.setDsgn("SE");
+		ebean1.setOrgname("Royal");
+
+		dao.insert(ebean1);
+		
 		Scanner sc = new Scanner(System.in);
-		System.out.println("Enter ID : ");
+		System.out.println("Enter ID which you want to update emp record : ");
 		int id = sc.nextInt();
-//		System.out.println("Enter Salary : ");
-//		int salary = sc.nextInt();
-//		sc.nextLine();
-//		System.out.println("Enter Dsgn : ");
-//		String dsgn = sc.nextLine();
-//		System.out.println("Enter OrgName : ");
-//		String orgname = sc.nextLine();
+		sc.nextLine();
+		System.out.println("Enter Name : ");
+		String name = sc.nextLine();
+		System.out.println("Enter Salary : ");
+		int salary = sc.nextInt();
+		sc.nextLine();
+		System.out.println("Enter Dsgn : ");
+		String dsgn = sc.nextLine();
+		System.out.println("Enter OrgName : ");
+		String orgname = sc.nextLine();
 		
 		
 		// Create EmployeeBean 
-//		EmployeeBean ebean = new EmployeeBean();
-//		ebean.setName(name);
-//		ebean.setSalary(salary);
-//		ebean.setDsgn(dsgn);
-//		ebean.setOrgname(orgname);
+		ebean1 = new EmployeeBean();
+		ebean1.setName(name);
+		ebean1.setSalary(salary);
+		ebean1.setDsgn(dsgn);
+		ebean1.setOrgname(orgname);
 
 		
 		// create EmployeeDao 
 		
-		EmployeeDao dao = new EmployeeDao();
 		
-		int rowsAffected = dao.delete(id);
+		
+		int rowsAffected = dao.update(id,ebean1);
 		
 		if (rowsAffected > 0)
 		{
-			System.out.println("Employee Record succcessfully Deleted : " + rowsAffected);
+			System.out.println("Employee Record succcessfully Updated : " + rowsAffected);
 		} else 
 		{
-			System.out.println("Employee Record not Deleted : " + rowsAffected);
+			System.out.println("Employee Record not Updated : " + rowsAffected);
 		}
 	}
 }
