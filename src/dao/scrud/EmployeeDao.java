@@ -1,8 +1,10 @@
 package dao.scrud;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import bean.EmployeeBean;
@@ -82,57 +84,109 @@ public class EmployeeDao
 		}
 		return rowsAffected;
 	}
-	public void getAllRecords() 
+	public ArrayList<EmployeeBean> getAllRecords() 
 	{
-
+		String selectQuery = "SELECT * FROM EMPLOYEE";
+		Connection conn = DbConnection.getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		EmployeeBean ebean = null;
+		ArrayList<EmployeeBean> list = new ArrayList<EmployeeBean>();
+		if (conn!=null) 
+		{
+			try 
+			{
+				stmt = conn.createStatement();
+				
+				rs = stmt.executeQuery(selectQuery);
+				
+				while(rs.next()) 
+				{
+					ebean = new EmployeeBean();
+					
+					int id = rs.getInt(1);
+					String name = rs.getString(2);
+					int salary = rs.getInt(3);
+					String dsgn = rs.getString(4);										
+					String orgname = rs.getString(5);
+					
+					ebean.setId(id);
+					ebean.setName(name);
+					ebean.setSalary(salary);
+					ebean.setDsgn(dsgn);
+					ebean.setOrgname(orgname);
+					
+					list.add(ebean);
+				}
+				
+			} catch (SQLException e) 
+			{
+				e.printStackTrace();
+			}
+		} else 
+		{
+			System.out.println("EmpDao - getAllRecords -- Db not connected");
+		}
+		return list;
 	}
 	public static void main(String[] args) 
 	{
 		
-		EmployeeDao dao = new EmployeeDao();
-		EmployeeBean ebean1 = new EmployeeBean();
-		ebean1.setName("Rahul");
-		ebean1.setSalary(1000);
-		ebean1.setDsgn("SE");
-		ebean1.setOrgname("Royal");
+//		EmployeeDao dao = new EmployeeDao();
+//		EmployeeBean ebean1 = new EmployeeBean();
+//		ebean1.setName("Rahul");
+//		ebean1.setSalary(1000);
+//		ebean1.setDsgn("SE");
+//		ebean1.setOrgname("Royal");
 
-		dao.insert(ebean1);
+//		dao.insert(ebean1);
 		
-		Scanner sc = new Scanner(System.in);
-		System.out.println("Enter ID which you want to update emp record : ");
-		int id = sc.nextInt();
-		sc.nextLine();
-		System.out.println("Enter Name : ");
-		String name = sc.nextLine();
-		System.out.println("Enter Salary : ");
-		int salary = sc.nextInt();
-		sc.nextLine();
-		System.out.println("Enter Dsgn : ");
-		String dsgn = sc.nextLine();
-		System.out.println("Enter OrgName : ");
-		String orgname = sc.nextLine();
+//		Scanner sc = new Scanner(System.in);
+//		System.out.println("Enter ID which you want to update emp record : ");
+//		int id = sc.nextInt();
+//		sc.nextLine();
+//		System.out.println("Enter Name : ");
+//		String name = sc.nextLine();
+//		System.out.println("Enter Salary : ");
+//		int salary = sc.nextInt();
+//		sc.nextLine();
+//		System.out.println("Enter Dsgn : ");
+//		String dsgn = sc.nextLine();
+//		System.out.println("Enter OrgName : ");
+//		String orgname = sc.nextLine();
 		
 		
 		// Create EmployeeBean 
-		ebean1 = new EmployeeBean();
-		ebean1.setName(name);
-		ebean1.setSalary(salary);
-		ebean1.setDsgn(dsgn);
-		ebean1.setOrgname(orgname);
+//		ebean1 = new EmployeeBean();
+//		ebean1.setName(name);
+//		ebean1.setSalary(salary);
+//		ebean1.setDsgn(dsgn);
+//		ebean1.setOrgname(orgname);
 
 		
 		// create EmployeeDao 
 		
 		
 		
-		int rowsAffected = dao.update(id,ebean1);
+//		int rowsAffected = dao.update(id,ebean1);
+//		
+//		if (rowsAffected > 0)
+//		{
+//			System.out.println("Employee Record succcessfully Updated : " + rowsAffected);
+//		} else 
+//		{
+//			System.out.println("Employee Record not Updated : " + rowsAffected);
+//		}
 		
-		if (rowsAffected > 0)
+		
+		EmployeeDao dao = new EmployeeDao();
+
+		ArrayList<EmployeeBean> list =	dao.getAllRecords();
+		
+		for (int i = 0; i < list.size(); i++) 
 		{
-			System.out.println("Employee Record succcessfully Updated : " + rowsAffected);
-		} else 
-		{
-			System.out.println("Employee Record not Updated : " + rowsAffected);
+			EmployeeBean e = list.get(i);
+			System.out.println(e.getId() + " " +e.getName() + " " + e.getSalary() + " " +e.getDsgn() +  "  " + e.getOrgname());
 		}
 	}
 }
